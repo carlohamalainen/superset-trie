@@ -89,6 +89,8 @@ In the shell, the output will be nicely coloured using [pretty-simple](https://h
 
 Criterion output: [superset-trie.html](superset-trie.html)
 
+![subset-trie criterion benchmarks](subset-trie-benchmarks.png)
+
     $ dist-newstyle/build/x86_64-linux/ghc-8.8.4/superset-trie-0.1.0.0/x/benchmark/build/benchmark/benchmark --output=superset-trie.html
     2884
     2884
