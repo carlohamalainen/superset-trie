@@ -1,0 +1,68 @@
+cabal-version:       >=1.10
+
+name:                superset-trie
+version:             0.1.0.0
+license-file:        LICENSE
+author:              Carlo Hamalainen
+maintainer:          carlo@carlo-hamalainen.net
+copyright:           Carlo Hamalainen (2021)
+-- category:
+build-type:          Simple
+extra-source-files:  CHANGELOG.md
+
+library
+  exposed-modules:   SupersetTrie, Generators
+  build-depends:       base >=4.13 && <4.14
+                     , pretty-simple
+                     , containers
+                     , QuickCheck
+                     , criterion
+  default-language:    Haskell2010
+  ghc-options:
+    -Wall
+    -Werror
+    -Wno-name-shadowing
+
+executable example
+  main-is:             Example.hs
+  other-modules:       SupersetTrie
+  build-depends:       base >=4.13 && <4.14
+                     , pretty-simple
+                     , containers
+                     , QuickCheck
+                     , criterion
+  default-language:    Haskell2010
+  ghc-options:
+    -Wall
+    -Werror
+    -Wno-name-shadowing
+
+executable benchmark
+  main-is:             Benchmark.hs
+  other-modules:       SupersetTrie, Generators
+  build-depends:       base >=4.13 && <4.14
+                     , pretty-simple
+                     , containers
+                     , QuickCheck
+                     , criterion
+  default-language:    Haskell2010
+  ghc-options:
+    -Wall
+    -Werror
+    -Wno-name-shadowing
+
+Test-Suite test-superset-trie
+  type:       exitcode-stdio-1.0
+  main-is:    Tests.hs
+  other-modules:       SupersetTrie, Generators
+  build-depends:    base >=4.13 && <4.14
+                   , pretty-simple
+                   , containers
+                   , QuickCheck
+                   , criterion
+  default-language:    Haskell2010
+  ghc-options:
+    -Wall
+    -Werror
+    -Wno-name-shadowing
+
