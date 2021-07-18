@@ -21,6 +21,5 @@ nonEmptySubListOf x = do
         [] -> pure <$> elements x
         _  -> return xs
 
-
 sortNub :: (Eq a, Ord a) => [a] -> [a]
 sortNub = List.nub . List.sort

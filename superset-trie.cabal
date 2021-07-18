@@ -25,7 +25,7 @@ library
 
 executable example
   main-is:             Example.hs
-  other-modules:       SupersetTrie
+  other-modules:       SupersetTrie, Generators
   build-depends:       base >=4.13 && <4.14
                      , pretty-simple
                      , containers

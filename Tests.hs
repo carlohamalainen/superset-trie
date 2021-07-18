@@ -18,7 +18,7 @@ prop_memberSubsets :: Gen P.Result
 prop_memberSubsets = do
     xs <- namesAndValues
 
-    let t = toTrie xs
+    let t = toSTrie xs
 
     x' <- elements xs >>= nonEmptySubListOf . fst
 
@@ -35,7 +35,7 @@ prop_membership = do
     
         names = List.nub $ List.sort $ concatMap fst xs
 
-        t = toTrie xs
+        t = toSTrie xs
 
         s = map Set.fromList xs'
 
@@ -53,7 +53,7 @@ prop_findVsMatch :: Gen P.Result
 prop_findVsMatch = do
     xs <- namesAndValues
 
-    let t = toTrie xs
+    let t = toSTrie xs
 
     x' <- elements xs >>= nonEmptySubListOf . fst
 
@@ -71,7 +71,7 @@ prop_keysRoundTrip = do
 
     let xs' = sortNub $ map (sortNub . fst) xs
     
-        t = toTrie xs
+        t = toSTrie xs
 
         k = sortNub $ map List.sort $ keys [] t
 

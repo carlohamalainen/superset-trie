@@ -7,6 +7,8 @@ import Generators
 
 import qualified Data.Set       as Set
 
+import Data.Bifunctor
+
 import Test.QuickCheck
 import Test.QuickCheck.Gen
 import Test.QuickCheck.Random
@@ -15,14 +17,15 @@ import qualified Criterion.Main         as C
 
 main :: IO ()
 main = do
-    let xs = unGen namesAndValues (mkQCGen 40) 8000
+    let xs :: [([String], Int)]
+        xs = unGen namesAndValues (mkQCGen 40) 8000
 
     print $ length xs
 
-    let t = toTrie xs
-        s = map (Set.fromList . fst) xs
+    let t = toSTrie xs
 
-        lists = map fst xs
+        s :: [(Set.Set String, Int)]
+        s = map (first Set.fromList) xs
 
         listIn xs ys = all (`elem` ys) xs
 
@@ -31,14 +34,14 @@ main = do
     print $ length xs
     print $ map length searchSubsets
 
-    let setFind s x = head $ filter (\ss -> Set.fromList x `Set.isSubsetOf` ss) s
+    let setFind sets x = head $ filter (\ss -> Set.fromList x `Set.isSubsetOf` fst ss) sets
 
-        listFind lists x = head $ filter (listIn x) lists
+        listFind lists x = head $ filter (listIn x . fst) lists
 
     C.defaultMain [
         C.bgroup "subset-find"
-            [ C.bench "subset-trie" $ C.nf (map (`find` t))         searchSubsets
-            , C.bench "Data.Set"    $ C.nf (map (setFind s))        searchSubsets
-            , C.bench "naive-lists" $ C.nf (map (listFind lists))   searchSubsets
+            [ C.bench "subset-trie" $ C.nf (map (`find` t))    searchSubsets
+            , C.bench "Data.Set"    $ C.nf (map (setFind s))   searchSubsets
+            , C.bench "naive-lists" $ C.nf (map (listFind xs)) searchSubsets
             ]
         ]

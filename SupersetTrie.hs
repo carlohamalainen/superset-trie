@@ -8,50 +8,52 @@ import qualified Data.List      as List
 import Control.Monad
 import Data.Maybe
 
-data Trie a b = Trie Bool (Maybe b) (M.Map a (Trie a b))
+import Generators (sortNub)
+
+data STrie a b = STrie Bool (Maybe b) (M.Map a (STrie a b))
   deriving (Eq, Read, Show)
 
-emptyTrie :: Trie a b
-emptyTrie = Trie False Nothing M.empty
+emptySTrie :: STrie a b
+emptySTrie = STrie False Nothing M.empty
 
-insert :: Ord a => [a] -> b -> Trie a b -> Trie a b
+insert :: Ord a => [a] -> b -> STrie a b -> STrie a b
 insert [] = error "Can't insert empty values"
-insert x = insert' (List.nub $ List.sort x)
+insert x = insert' $ sortNub x
   where
-    insert' :: Ord a => [a] -> b -> Trie a b -> Trie a b
-    insert' [] b (Trie _ _ nodes) = Trie True (Just b) nodes
-    insert' (y:ys) b (Trie end _b nodes)
-        = Trie end (Just b) $
-            M.alter (Just . insert' ys b . fromMaybe emptyTrie')
+    insert' :: Ord a => [a] -> b -> STrie a b -> STrie a b
+    insert' [] b (STrie _ _ nodes) = STrie True (Just b) nodes
+    insert' (y:ys) b (STrie end _b nodes)
+        = STrie end (Just b) $
+            M.alter (Just . insert' ys b . fromMaybe emptySTrie')
                 y
                 nodes
 
-    emptyTrie' = Trie True Nothing M.empty
+    emptySTrie' = STrie True Nothing M.empty
 
-toTrie :: (Foldable t, Ord a) => t ([a], b) -> Trie a b
-toTrie = foldl (\t (a, b) -> insert a b t) emptyTrie
+toSTrie :: (Foldable t, Ord a) => t ([a], b) -> STrie a b
+toSTrie = foldl (\t (a, b) -> insert a b t) emptySTrie
 
-keys :: Ord a => [a] -> Trie a b -> [[a]]
-keys acc (Trie False _ nodes)
+keys :: Ord a => [a] -> STrie a b -> [[a]]
+keys acc (STrie False _ nodes)
     | M.null nodes
     = error "what"
 
     | otherwise
     = List.sort $ concatMap (\(k, n) -> keys (k:acc) n) $ M.toList nodes
 
-keys acc (Trie True _ nodes)
+keys acc (STrie True _ nodes)
     | M.null nodes
     = [acc]
 
     | otherwise
     = List.sort $ concatMap (\(k, n) -> keys (k:acc) n) $ M.toList nodes
 
-member :: (Ord a, Show a, Show b) => [a] -> Trie a b -> Bool
-member = member' . List.nub . List.sort
+member :: (Ord a) => [a] -> STrie a b -> Bool
+member = member' . sortNub
   where
-    member' [] (Trie end _ _) = end
+    member' [] (STrie end _ _) = end
 
-    member' (x:xs) (Trie _ _ nodes) = with || without
+    member' (x:xs) (STrie _ _ nodes) = with || without
       where
 
         -- (1) Use x, which means finding a child trie labeled x.
@@ -73,14 +75,14 @@ member = member' . List.nub . List.sort
 
         without = any (member' (x:xs) . snd) $ M.toList nodes'
 
-find :: Ord a => [a] -> Trie a b -> Maybe b
-find = find' . List.nub . List.sort 
+find :: Ord a => [a] -> STrie a b -> Maybe b
+find = find' . sortNub 
   where
-    find' :: Ord a => [a] -> Trie a b -> Maybe b
+    find' :: Ord a => [a] -> STrie a b -> Maybe b
 
-    find' [] (Trie end b _) = if end then b else Nothing
+    find' [] (STrie end b _) = if end then b else Nothing
 
-    find' (x:xs) (Trie _ _ nodes) = foldl mplus with without
+    find' (x:xs) (STrie _ _ nodes) = foldl mplus with without
       where
         with = find' xs =<< M.lookup x nodes
 

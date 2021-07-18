@@ -14,7 +14,8 @@ main = do
             , (["dog"],                 2)
             ]
 
-        t = toTrie names
+        t :: STrie String Int
+        t = toSTrie names
 
     pPrint t
 
