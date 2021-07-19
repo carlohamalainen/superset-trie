@@ -10,38 +10,31 @@ import Data.Maybe
 
 import Generators (sortNub)
 
-data STrie a b = STrie Bool (Maybe b) (M.Map a (STrie a b))
+data STrie a b = STrie (Maybe b) (M.Map a (STrie a b))
   deriving (Eq, Read, Show)
 
 emptySTrie :: STrie a b
-emptySTrie = STrie False Nothing M.empty
+emptySTrie = STrie Nothing M.empty
 
 insert :: Ord a => [a] -> b -> STrie a b -> STrie a b
 insert [] = error "Can't insert empty values"
 insert x = insert' $ sortNub x
   where
     insert' :: Ord a => [a] -> b -> STrie a b -> STrie a b
-    insert' [] b (STrie _ _ nodes) = STrie True (Just b) nodes
-    insert' (y:ys) b (STrie end _b nodes)
-        = STrie end (Just b) $
+    insert' [] b (STrie _ nodes) = STrie (Just b) nodes
+    insert' (y:ys) b (STrie _b nodes)
+        = STrie (Just b) $
             M.alter (Just . insert' ys b . fromMaybe emptySTrie')
                 y
                 nodes
 
-    emptySTrie' = STrie True Nothing M.empty
+    emptySTrie' = STrie Nothing M.empty
 
 toSTrie :: (Foldable t, Ord a) => t ([a], b) -> STrie a b
 toSTrie = foldl (\t (a, b) -> insert a b t) emptySTrie
 
 keys :: Ord a => [a] -> STrie a b -> [[a]]
-keys acc (STrie False _ nodes)
-    | M.null nodes
-    = error "what"
-
-    | otherwise
-    = List.sort $ concatMap (\(k, n) -> keys (k:acc) n) $ M.toList nodes
-
-keys acc (STrie True _ nodes)
+keys acc (STrie _ nodes)
     | M.null nodes
     = [acc]
 
@@ -49,11 +42,12 @@ keys acc (STrie True _ nodes)
     = List.sort $ concatMap (\(k, n) -> keys (k:acc) n) $ M.toList nodes
 
 member :: (Ord a) => [a] -> STrie a b -> Bool
-member = member' . sortNub
+member [] _ = False
+member k strie = member' (sortNub k) strie
   where
-    member' [] (STrie end _ _) = end
+    member' [] (STrie _ _) = True
 
-    member' (x:xs) (STrie _ _ nodes) = with || without
+    member' (x:xs) (STrie _ nodes) = with || without
       where
 
         -- (1) Use x, which means finding a child trie labeled x.
@@ -76,13 +70,14 @@ member = member' . sortNub
         without = any (member' (x:xs) . snd) $ M.toList nodes'
 
 find :: Ord a => [a] -> STrie a b -> Maybe b
-find = find' . sortNub 
+find [] _ = Nothing
+find k strie = find' (sortNub k) strie
   where
     find' :: Ord a => [a] -> STrie a b -> Maybe b
 
-    find' [] (STrie end b _) = if end then b else Nothing
+    find' [] (STrie b _) = b
 
-    find' (x:xs) (STrie _ _ nodes) = foldl mplus with without
+    find' (x:xs) (STrie _ nodes) = foldl mplus with without
       where
         with = find' xs =<< M.lookup x nodes
 
