@@ -97,22 +97,22 @@ Criterion output: [superset-trie.html](superset-trie.html)
     2884
     [50,50,50,50,50,50,50,50,50,50]
     benchmarking subset-find/subset-trie
-    time                 658.6 ms   (613.6 ms .. 718.8 ms)
+    time                 495.7 ms   (476.1 ms .. 537.9 ms)
                          0.999 R²   (0.998 R² .. 1.000 R²)
-    mean                 645.3 ms   (634.2 ms .. 655.2 ms)
-    std dev              11.84 ms   (8.426 ms .. 14.44 ms)
+    mean                 481.1 ms   (477.2 ms .. 488.8 ms)
+    std dev              7.641 ms   (94.67 μs .. 9.084 ms)
     variance introduced by outliers: 19% (moderately inflated)
 
     benchmarking subset-find/Data.Set
-    time                 2.626 s    (2.463 s .. 2.950 s)
-                         0.998 R²   (0.996 R² .. 1.000 R²)
-    mean                 2.570 s    (2.536 s .. 2.609 s)
-    std dev              45.96 ms   (18.30 ms .. 61.96 ms)
-    variance introduced by outliers: 19% (moderately inflated)
+    time                 2.606 s    (2.127 s .. 3.647 s)
+                         0.981 R²   (0.967 R² .. 1.000 R²)
+    mean                 2.687 s    (2.476 s .. 2.860 s)
+    std dev              231.5 ms   (120.8 ms .. 314.1 ms)
+    variance introduced by outliers: 22% (moderately inflated)
 
     benchmarking subset-find/naive-lists
-    time                 11.66 s    (8.715 s .. 16.03 s)
-                         0.980 R²   (0.973 R² .. 1.000 R²)
-    mean                 9.750 s    (9.155 s .. 10.75 s)
-    std dev              962.3 ms   (146.5 ms .. 1.240 s)
-    variance introduced by outliers: 22% (moderately inflated)
+    time                 8.774 s    (6.096 s .. 9.930 s)
+                         0.989 R²   (0.972 R² .. 1.000 R²)
+    mean                 10.22 s    (9.482 s .. 10.65 s)
+    std dev              724.3 ms   (294.8 ms .. 995.7 ms)
+    variance introduced by outliers: 20% (moderately inflated)

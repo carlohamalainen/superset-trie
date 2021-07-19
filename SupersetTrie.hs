@@ -7,6 +7,7 @@ import qualified Data.List      as List
 
 import Control.Monad
 import Data.Maybe
+import Data.Foldable
 
 import Generators (sortNub)
 
@@ -42,16 +43,21 @@ keys acc (STrie _ nodes)
     = List.sort $ concatMap (\(k, n) -> keys (k:acc) n) $ M.toList nodes
 
 member :: (Ord a) => [a] -> STrie a b -> Bool
-member [] _ = False
-member k strie = member' (sortNub k) strie
-  where
-    member' [] (STrie _ _) = True
+member = (isJust .) . SupersetTrie.find
 
-    member' (x:xs) (STrie _ nodes) = with || without
+find :: Ord a => [a] -> STrie a b -> Maybe b
+find [] _ = Nothing
+find k strie = find' (sortNub k) strie
+  where
+    find' :: Ord a => [a] -> STrie a b -> Maybe b
+
+    find' [] (STrie b _) = b
+
+    find' (x:xs) (STrie _ nodes) = foldl' mplus with without
       where
 
         -- (1) Use x, which means finding a child trie labeled x.
-        with = Just True == (member' xs <$> M.lookup x nodes)
+        with = find' xs =<< M.lookup x nodes
 
         -- (2) Skip x, which means finding some child tree where
         -- the recursive call works. Since x:xs is sorted and the
@@ -67,20 +73,4 @@ member k strie = member' (sortNub k) strie
         -- to the fact that "zed" > "foo".
         nodes' = M.filterWithKey (\k _ -> k < x) nodes
 
-        without = any (member' (x:xs) . snd) $ M.toList nodes'
-
-find :: Ord a => [a] -> STrie a b -> Maybe b
-find [] _ = Nothing
-find k strie = find' (sortNub k) strie
-  where
-    find' :: Ord a => [a] -> STrie a b -> Maybe b
-
-    find' [] (STrie b _) = b
-
-    find' (x:xs) (STrie _ nodes) = foldl mplus with without
-      where
-        with = find' xs =<< M.lookup x nodes
-
-        -- Similar optimisation as in member'.
-        nodes' = M.filterWithKey (\k _ -> k < x) nodes
         without = map (find' (x:xs) . snd) $ M.toList nodes'
