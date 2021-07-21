@@ -32,17 +32,17 @@ Run ``cabal test`` or
 In the shell, the output will be nicely coloured using [pretty-simple](https://hackage.haskell.org/package/pretty-simple).
 
     $ dist-newstyle/build/x86_64-linux/ghc-8.8.4/superset-trie-0.1.0.0/x/example/build/example/example
-    Trie False
+    STrie
         ( Just 2 )
         ( fromList
             [
                 ( "apple"
-                , Trie True
+                , STrie
                     ( Just 1 )
                     ( fromList
                         [
                             ( "cat"
-                            , Trie True
+                            , STrie
                                 ( Just 1 )
                                 ( fromList [] )
                             )
@@ -51,17 +51,17 @@ In the shell, the output will be nicely coloured using [pretty-simple](https://h
                 )
             ,
                 ( "bar"
-                , Trie True
+                , STrie
                     ( Just 0 )
                     ( fromList
                         [
                             ( "baz"
-                            , Trie True
+                            , STrie
                                 ( Just 0 )
                                 ( fromList
                                     [
                                         ( "foo"
-                                        , Trie True
+                                        , STrie
                                             ( Just 0 )
                                             ( fromList [] )
                                         )
@@ -73,7 +73,7 @@ In the shell, the output will be nicely coloured using [pretty-simple](https://h
                 )
             ,
                 ( "dog"
-                , Trie True
+                , STrie
                     ( Just 2 )
                     ( fromList [] )
                 )
@@ -85,6 +85,7 @@ In the shell, the output will be nicely coloured using [pretty-simple](https://h
     (["bar","baz"],True,Just 0)
     (["cat","apple"],True,Just 1)
     (["foo","bar","baz","blerp"],False,Nothing)
+
 
 ## Benchmark
 
