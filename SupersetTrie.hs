@@ -32,7 +32,7 @@ insert x = insert' $ sortNub x
     emptySTrie' = STrie Nothing M.empty
 
 toSTrie :: (Foldable t, Ord a) => t ([a], b) -> STrie a b
-toSTrie = foldl (\t (a, b) -> insert a b t) emptySTrie
+toSTrie = foldl' (\t (a, b) -> insert a b t) emptySTrie
 
 keys :: Ord a => [a] -> STrie a b -> [[a]]
 keys acc (STrie _ nodes)
